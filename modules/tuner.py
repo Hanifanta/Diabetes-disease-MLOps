@@ -13,7 +13,7 @@ import tensorflow as tf
 import tensorflow_transform as tft
 from keras import layers
 from keras_tuner.engine import base_tuner
-from transform import (LABEL_KEY, NUMERICAL_FEATURES,
+from transform import (CATEGORICAL_FEATURES, LABEL_KEY, NUMERICAL_FEATURES,
                        transformed_name)
 
 NUM_EPOCHS = 5
@@ -106,6 +106,11 @@ def get_model_tuner(hyperparameters):
     )
 
     input_features = []
+
+    for key, dim in CATEGORICAL_FEATURES.items():
+        input_features.append(
+            layers.Input(shape=(dim+1,), name=transformed_name(key))
+        )
 
     for feature in NUMERICAL_FEATURES:
         input_features.append(

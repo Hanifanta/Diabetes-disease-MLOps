@@ -9,18 +9,25 @@ Usage:
 import tensorflow as tf
 import tensorflow_transform as tft
 
+CATEGORICAL_FEATURES = {
+    "Sex": 2,
+    "ChestPainType": 4,
+    "RestingECG": 3,
+    "ExerciseAngina": 2,
+    "ST_Slope": 3,
+}
+
 NUMERICAL_FEATURES = [
-    "Pregnancies",
-    "Glucose",
-    "BloodPressure",
-    "SkinThickness",
-    "Insulin",
-    "BMI",
-    "DiabetesPedigreeFunction",
-    "Age"
+    "Age",
+    "RestingBP",
+    "Cholesterol",
+    "FastingBS",
+    "MaxHR",
+    "Oldpeak",
 ]
 
-LABEL_KEY = "Outcome"
+LABEL_KEY = "HeartDisease"
+
 
 def transformed_name(key):
     """Transform feature key
@@ -33,6 +40,22 @@ def transformed_name(key):
     """
 
     return f"{key}_xf"
+
+
+def convert_num_to_one_hot(label_tensor, num_labels=2):
+    """Convert a label (0 or 1) into a one-hot vector
+
+    Args:
+        label_tensor (int): label tensor (0 or 1)
+        num_labels (int, optional): num of label. Defaults to 2.
+
+    Returns:
+        tf.Tensor: label tensor
+    """
+
+    one_hot_tensor = tf.one_hot(label_tensor, num_labels)
+    return tf.reshape(one_hot_tensor, [-1, num_labels])
+
 
 def replace_nan(tensor):
     """Replace nan value with zero number
@@ -62,6 +85,12 @@ def preprocessing_fn(inputs):
     """
 
     outputs = {}
+
+    for keys, values in CATEGORICAL_FEATURES.items():
+        int_value = tft.compute_and_apply_vocabulary(
+            inputs[keys], top_k=values+1)
+        outputs[transformed_name(keys)] = convert_num_to_one_hot(
+            int_value, num_labels=values+1)
 
     for feature in NUMERICAL_FEATURES:
         inputs[feature] = replace_nan(inputs[feature])

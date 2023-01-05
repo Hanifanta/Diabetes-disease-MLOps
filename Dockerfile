@@ -1,9 +1,9 @@
 FROM tensorflow/serving:2.8.0
 
-COPY ./outputs/serving_model /models/diabetes-disease-model
-COPY ./config /model_config
+COPY ./outputs/serving_model /models/heart-disease-model
+COPY /config /model_config
 
-ENV MODEL_NAME=diabetes-disease-model
+ENV MODEL_NAME=heart-disease-model
 ENV MONITORING_CONFIG="/model_config/prometheus.config"
 ENV PORT=8501
 

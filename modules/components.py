@@ -98,10 +98,10 @@ def init_components(args):
     ).with_id("Latest_blessed_model_resolve")
 
     eval_config = tfma.EvalConfig(
-        model_specs=[tfma.ModelSpec(label_key="Outcome")],
+        model_specs=[tfma.ModelSpec(label_key="HeartDisease")],
         slicing_specs=[
             tfma.SlicingSpec(),
-            tfma.SlicingSpec(feature_keys=["Age"]),
+            tfma.SlicingSpec(feature_keys=["Sex"]),
         ],
         metrics_specs=[
             tfma.MetricsSpec(metrics=[
